@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // Assignment 2 - Part II: Jenkins pipeline (build phase)
 // Plugins used: Git, Pipeline, Docker Pipeline, GitHub (webhook trigger),
-//               Email Extension (build result mail)
+//               Mailer (build result mail)
 //
 // Flow: GitHub push -> webhook -> this pipeline
 //       1. read who pushed (commit author email)
@@ -97,12 +97,12 @@ pipeline {
                 def recipients = [env.COMMIT_EMAIL, env.ALWAYS_NOTIFY].findAll { it }.join(',')
                 def status = currentBuild.currentResult
                 def color = status == 'SUCCESS' ? '#1a7f37' : '#cf222e'
-                emailext(
+                // Uses the "E-mail Notification" SMTP settings (Mailer plugin)
+                mail(
                     to: recipients,
-                    recipientProviders: [developers(), requestor()],
                     subject: "[Jenkins] ${env.JOB_NAME} #${env.BUILD_NUMBER}: ${status}",
                     mimeType: 'text/html',
-                    attachLog: true,
+                    charset: 'UTF-8',
                     body: """
                         <h2 style="color:${color}">Build ${status}</h2>
                         <table cellpadding="4">
@@ -113,7 +113,6 @@ pipeline {
                           <tr><td><b>Application</b></td><td><a href="http://${env.PUBLIC_IP}:${env.APP_PORT}">http://${env.PUBLIC_IP}:${env.APP_PORT}</a></td></tr>
                           <tr><td><b>Console log</b></td><td><a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></td></tr>
                         </table>
-                        <p>The full console log is attached.</p>
                     """
                 )
             }

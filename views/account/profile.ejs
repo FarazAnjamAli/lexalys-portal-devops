@@ -1,0 +1,24 @@
+<%- include('../partials/top') %>
+<%- include('../partials/account-head', { heading: 'Profile', sub: 'Signed in as ' + user.email + '.' }) %>
+<div class="wrap app-body">
+  <div class="two-col">
+    <form class="form-card notch" method="post" action="/account/profile" id="profile-form" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <h2>Your details</h2>
+      <%- include('../partials/field', { name: 'full_name', label: 'Full name', value: values.full_name, error: errors.full_name, required: true, autocomplete: 'name' }) %>
+      <%- include('../partials/field', { name: 'company', label: 'Company', value: values.company, error: errors.company, autocomplete: 'organization' }) %>
+      <%- include('../partials/field', { name: 'phone', label: 'Phone', type: 'tel', value: values.phone, error: errors.phone, autocomplete: 'tel' }) %>
+      <button class="btn" type="submit" id="profile-submit">Save details</button>
+    </form>
+
+    <form class="form-card notch" method="post" action="/account/password" id="password-form" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <h2>Change password</h2>
+      <%- include('../partials/field', { name: 'current_password', label: 'Current password', type: 'password', value: '', error: pwErrors.current_password, required: true, autocomplete: 'current-password' }) %>
+      <%- include('../partials/field', { name: 'new_password', label: 'New password', type: 'password', value: '', error: pwErrors.new_password, required: true, autocomplete: 'new-password', hint: 'At least 8 characters, with letters and numbers' }) %>
+      <%- include('../partials/field', { name: 'confirm_password', label: 'Confirm new password', type: 'password', value: '', error: pwErrors.confirm_password, required: true, autocomplete: 'new-password' }) %>
+      <button class="btn" type="submit" id="password-submit">Change password</button>
+    </form>
+  </div>
+</div>
+<%- include('../partials/bottom') %>

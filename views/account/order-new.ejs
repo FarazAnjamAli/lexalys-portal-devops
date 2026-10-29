@@ -1,0 +1,65 @@
+<%- include('../partials/top') %>
+<%- include('../partials/account-head', { heading: 'Place an order', sub: 'Choose a service and how fast you need it. The price updates as you choose.' }) %>
+<div class="wrap app-body">
+  <form method="post" action="/account/orders" id="order-form" class="record" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="form-card notch">
+      <% if (Object.keys(errors).length) { %>
+        <div class="form-error" role="alert" id="form-error">Check the highlighted fields and try again.</div>
+      <% } %>
+      <div class="field <%= errors.service_id ? 'has-error' : '' %>">
+        <label for="service_id">Service *</label>
+        <select id="service_id" name="service_id" required>
+          <option value="">Choose a service</option>
+          <% services.forEach(function (s) { %>
+            <option value="<%= s.id %>" data-setup="<%= s.setup_price %>" data-monthly="<%= s.monthly_price || 0 %>" data-days="<%= s.timeline_days || 0 %>" <%= Number(values.service_id) === s.id ? 'selected' : '' %>>
+              <%= s.code %> <%= s.name %> (<%= fmt.money(s.setup_price) %>)
+            </option>
+          <% }) %>
+        </select>
+        <% if (errors.service_id) { %><span class="error" id="service_id-error"><%= errors.service_id %></span><% } %>
+      </div>
+
+      <div class="field <%= errors.rush ? 'has-error' : '' %>">
+        <span class="label">Delivery speed *</span>
+        <div class="radio-cards" id="rush-options">
+          <% Object.keys(rush).forEach(function (k) { const r = rush[k]; %>
+            <label>
+              <input type="radio" name="rush" value="<%= k %>" id="rush-<%= k %>" data-mult="<%= r.multiplier %>" data-speed="<%= r.speed %>" <%= (values.rush || 'standard') === k ? 'checked' : '' %>>
+              <span><%= r.label %><small>price x<%= r.multiplier.toFixed(2) %></small></span>
+            </label>
+          <% }) %>
+        </div>
+        <% if (errors.rush) { %><span class="error"><%= errors.rush %></span><% } %>
+      </div>
+
+      <div class="field <%= errors.care_plan ? 'has-error' : '' %>">
+        <label class="check" for="care_plan"><input type="checkbox" id="care_plan" name="care_plan" <%= values.care_plan ? 'checked' : '' %>> Add a monthly care plan: monitoring, error triage and model upgrades</label>
+        <% if (errors.care_plan) { %><span class="error" id="care_plan-error"><%= errors.care_plan %></span><% } %>
+      </div>
+
+      <%- include('../partials/field', { name: 'notes', label: 'Notes for our team', type: 'textarea', value: values.notes, error: errors.notes, hint: 'Tools you use, deadlines, anything we should know' }) %>
+
+      <div class="field <%= errors.agree ? 'has-error' : '' %>">
+        <label class="check" for="agree"><input type="checkbox" id="agree" name="agree" <%= values.agree ? 'checked' : '' %>> I understand rush delivery depends on capacity and pass-through costs (model APIs, telephony) are billed to my own accounts</label>
+        <% if (errors.agree) { %><span class="error" id="agree-error"><%= errors.agree %></span><% } %>
+      </div>
+    </div>
+
+    <aside>
+      <div class="quote-preview notch" id="quote-preview" aria-live="polite">
+        <h2 class="visually-hidden">Price</h2>
+        <dl>
+          <dt>Base setup</dt><dd id="q-base">-</dd>
+          <dt>Speed multiplier</dt><dd id="q-rush">-</dd>
+          <dt>Delivery</dt><dd id="q-days">-</dd>
+          <dt>Care plan</dt><dd id="q-monthly">-</dd>
+          <dt class="total">Setup total</dt><dd class="total" id="q-setup">-</dd>
+        </dl>
+      </div>
+      <button class="btn btn-accent" type="submit" id="order-submit">Place order</button>
+      <p class="dim mt">Your order starts as pending. We confirm it within one business day, and you can cancel any time before that.</p>
+    </aside>
+  </form>
+</div>
+<%- include('../partials/bottom') %>

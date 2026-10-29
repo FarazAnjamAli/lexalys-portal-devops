@@ -1,0 +1,76 @@
+# ---------------------------------------------------------------------------
+# Assignment 2 - Part II: the compose file Jenkins runs after every push.
+# Same app as Part I, with the changes the assignment asks for:
+#   * no Dockerfile: the code from the Jenkins workspace is attached as a
+#     volume (./ -> /app) and runs on the stock node:22-alpine image
+#   * different host ports:      web 8082 -> 3000,  db 3308 -> 3306
+#   * different container names: lexalys-ci-web, lexalys-ci-db
+#   * its own database volume:   lexalys_ci_db_data
+#
+# Jenkins runs:  docker compose -f docker-compose.ci.yml up -d --force-recreate
+# Bring it down: docker compose -f docker-compose.ci.yml down
+# ---------------------------------------------------------------------------
+name: lexalys-ci
+
+services:
+  ci-db:
+    image: mysql:8.4
+    container_name: lexalys-ci-db
+    restart: unless-stopped
+    command: ["--innodb-buffer-pool-size=128M", "--performance-schema=OFF"]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${CI_DB_ROOT_PASSWORD:-CiRoot2026x}
+      MYSQL_DATABASE: lexalys_portal
+      MYSQL_USER: lexalys_app
+      MYSQL_PASSWORD: ${CI_DB_PASSWORD:-CiApp2026x}
+    volumes:
+      - lexalys_ci_db_data:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  ci-web:
+    image: node:22-alpine
+    container_name: lexalys-ci-web
+    restart: unless-stopped
+    working_dir: /app
+    user: "${JENKINS_UID:-1000}:${JENKINS_GID:-1000}"
+    volumes:
+      - ./:/app                     # the code, straight from the Jenkins workspace
+    # node_modules is installed by the Jenkins "Build" stage; install here only if missing
+    command: ["sh", "-c", "test -d node_modules/express || npm install --omit=dev --no-audit --no-fund --cache /tmp/.npm; exec node src/server.js"]
+    depends_on:
+      ci-db:
+        condition: service_healthy
+    environment:
+      HOME: /tmp
+      NODE_ENV: production
+      PORT: "3000"
+      DEPLOY_LABEL: "Jenkins CI on AWS EC2 (Assignment 2, Part II) - build #${BUILD_NUMBER:-manual}"
+      DB_HOST: ci-db
+      DB_PORT: "3306"
+      DB_USER: lexalys_app
+      DB_PASSWORD: ${CI_DB_PASSWORD:-CiApp2026x}
+      DB_NAME: lexalys_portal
+      SESSION_SECRET: ${CI_SESSION_SECRET:-ci-session-secret-change-me-0123456789abcdef}
+      COOKIE_SECURE: "false"
+      ADMIN_EMAIL: ${CI_ADMIN_EMAIL:-admin@lexalyslabs.com}
+      ADMIN_PASSWORD: ${CI_ADMIN_PASSWORD:-Admin2026x}
+      ADMIN_NAME: Lexalys Admin
+    ports:
+      - "8082:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+volumes:
+  lexalys_ci_db_data:
+    name: lexalys_ci_db_data

@@ -1,0 +1,38 @@
+<%- include('../partials/top') %>
+<%- include('../partials/account-head', { heading: 'Order ' + order.order_no, sub: order.service_name + ', placed ' + fmt.date(order.created_at) + '.' }) %>
+<div class="wrap app-body">
+  <div class="record">
+    <div>
+      <dl class="facts" id="order-facts">
+        <dt>Status</dt><dd><span class="badge badge-<%= order.status %>" id="order-status"><%= fmt.status(order.status) %></span></dd>
+        <dt>Service</dt><dd><a href="/services/<%= order.service_slug %>"><%= order.service_name %></a></dd>
+        <dt>Delivery speed</dt><dd><%= rush[order.rush].label %></dd>
+        <dt>Delivery time</dt><dd><%= order.timeline_days ? order.timeline_days + ' business days' : 'Scoped after audit' %></dd>
+        <dt>Setup total</dt><dd class="mono" id="order-setup"><%= fmt.money(order.setup_total) %></dd>
+        <dt>Care plan</dt><dd class="mono"><%= order.monthly_total ? fmt.money(order.monthly_total) + ' / month' : 'None' %></dd>
+      </dl>
+      <% if (order.notes) { %>
+        <h3>Your notes</h3>
+        <div class="message"><%= order.notes %></div>
+      <% } %>
+      <div class="btn-row">
+        <a class="btn btn-ghost" href="/account/orders">Back to orders</a>
+        <% if (order.status === 'pending') { %>
+          <form method="post" action="/account/orders/<%= order.id %>/cancel">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn btn-danger" type="submit" id="cancel-order">Cancel this order</button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+    <aside class="side">
+      <h3>History</h3>
+      <ol class="timeline" id="order-timeline">
+        <% events.forEach(function (e) { %>
+          <li><strong><%= fmt.status(e.status) %></strong><% if (e.note) { %>. <%= e.note %><% } %><div class="when"><%= fmt.dateTime(e.created_at) %></div></li>
+        <% }) %>
+      </ol>
+    </aside>
+  </div>
+</div>
+<%- include('../partials/bottom') %>

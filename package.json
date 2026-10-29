@@ -1,0 +1,26 @@
+{
+  "name": "lexalys-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lexalys Labs Client Portal: accounts, enquiries, service catalogue and orders on Node.js + Express + MySQL. Built for deployment on AWS EC2 (IaaS) and Elastic Beanstalk + RDS (PaaS).",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "db:init": "node src/scripts/db-init.js",
+    "create-admin": "node src/scripts/create-admin.js",
+    "seed:demo": "node src/scripts/seed-demo.js",
+    "test": "node --test --test-concurrency=1 tests/portal.test.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.4.1",
+    "express-session": "^1.18.1",
+    "helmet": "^8.0.0",
+    "mysql2": "^3.24.0"
+  },
+  "license": "UNLICENSED"
+}

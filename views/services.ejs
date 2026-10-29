@@ -1,0 +1,49 @@
+<%- include('partials/top') %>
+<section class="app-head">
+  <div class="wrap">
+    <h1>Services</h1>
+    <p>Every service has a fixed setup price, a delivery time and an optional monthly care plan.</p>
+  </div>
+</section>
+<div class="wrap app-body">
+  <form class="filters" method="get" action="/services" role="search" id="service-search">
+    <div class="field">
+      <label for="q">Search services</label>
+      <input type="search" id="q" name="q" value="<%= q %>" placeholder="e.g. voice, leads, reviews">
+    </div>
+    <% if (category) { %><input type="hidden" name="category" value="<%= category %>"><% } %>
+    <button class="btn" type="submit" id="search-button">Search</button>
+    <% if (q || category) { %><a href="/services" id="clear-filters">Clear filters</a><% } %>
+  </form>
+
+  <nav class="chips" aria-label="Categories" id="category-chips">
+    <a class="chip" href="/services<%= q ? '?q=' + encodeURIComponent(q) : '' %>" aria-current="<%= !category %>">All</a>
+    <% categories.forEach(function (c) { %>
+      <a class="chip" href="/services?category=<%= encodeURIComponent(c) %><%= q ? '&q=' + encodeURIComponent(q) : '' %>" aria-current="<%= category === c %>"><%= c %></a>
+    <% }) %>
+  </nav>
+
+  <p class="dim" id="result-count"><%= services.length %> <%= services.length === 1 ? 'service' : 'services' %><%= q ? ' matching "' + q + '"' : '' %><%= category ? ' in ' + category : '' %></p>
+
+  <% if (services.length) { %>
+    <div class="svc-grid" id="service-list">
+      <% services.forEach(function (s) { %>
+        <a class="svc" href="/services/<%= s.slug %>" data-code="<%= s.code %>">
+          <div class="top"><span class="mono"><%= s.code %></span><span><%= s.category %></span></div>
+          <h3><%= s.name %></h3>
+          <p><%= s.summary %></p>
+          <div class="meta">
+            <span>from <b><%= fmt.money(s.setup_price) %></b></span>
+            <span><%= s.timeline_days ? s.timeline_days + ' days' : 'Scoped' %></span>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="empty" id="no-results">
+      <h3>No services match that search</h3>
+      <p>Try a broader word, or <a href="/contact">tell us what you need</a> and we will scope a custom build.</p>
+    </div>
+  <% } %>
+</div>
+<%- include('partials/bottom') %>

@@ -1,0 +1,14 @@
+<%- include('partials/top') %>
+<div class="wrap error-page">
+  <p class="code">Enquiry <span id="lead-ref">#<%= lead.id %></span></p>
+  <h1 id="thanks-title">Thanks, <%= lead.name.split(' ')[0] %>. Your message is with us.</h1>
+  <p class="lead">A person on our team will reply within one business day.
+    <% if (lead.kind === 'callback') { %>We will call you on the number you gave.<% } %>
+    <% if (lead.kind === 'audit') { %>We will send two times for the audit kick-off call.<% } %>
+  </p>
+  <div class="btn-row">
+    <a class="btn" href="/services">Keep browsing services</a>
+    <% if (!user) { %><a class="btn btn-ghost" href="/register">Create an account to track orders</a><% } %>
+  </div>
+</div>
+<%- include('partials/bottom') %>

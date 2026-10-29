@@ -1,0 +1,37 @@
+<%- include('../partials/top') %>
+<%- include('../partials/admin-head', { heading: 'Users', sub: 'Client and staff accounts. Deactivated users cannot sign in.' }) %>
+<div class="wrap app-body">
+  <form class="filters" method="get" action="/admin/users" id="user-filters">
+    <div class="field"><label for="q">Search</label><input type="search" id="q" name="q" value="<%= q %>" placeholder="Name, email or company"></div>
+    <button class="btn" type="submit" id="filter-submit">Search</button>
+    <% if (q) { %><a href="/admin/users">Clear</a><% } %>
+  </form>
+  <p class="dim" id="result-count"><%= users.length %> <%= users.length === 1 ? 'user' : 'users' %></p>
+  <div class="table-wrap">
+    <table class="data" id="users-table">
+      <thead><tr><th>Name</th><th>Role</th><th>Joined</th><th>Last sign-in</th><th class="num">Orders</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <% users.forEach(function (u) { %>
+          <tr data-email="<%= u.email %>">
+            <td><strong><%= u.full_name %></strong><div class="muted"><%= u.email %><%= u.company ? ', ' + u.company : '' %></div></td>
+            <td><span class="badge badge-<%= u.role %>"><%= u.role === 'admin' ? 'Admin' : 'Client' %></span></td>
+            <td><%= fmt.date(u.created_at) %></td>
+            <td><%= u.last_login_at ? fmt.date(u.last_login_at) : 'Never' %></td>
+            <td class="num"><%= u.order_count %></td>
+            <td><span class="badge badge-<%= u.is_active ? 'active' : 'inactive' %>"><%= u.is_active ? 'Active' : 'Deactivated' %></span></td>
+            <td>
+              <% if (u.id !== user.id) { %>
+                <form method="post" action="/admin/users/<%= u.id %>/toggle">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn-link" type="submit"><%= u.is_active ? 'Deactivate' : 'Reactivate' %></button>
+                </form>
+              <% } else { %><span class="muted">You</span><% } %>
+            </td>
+          </tr>
+        <% }) %>
+        <% if (!users.length) { %><tr><td colspan="7" class="muted" id="no-results">No users match.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/bottom') %>

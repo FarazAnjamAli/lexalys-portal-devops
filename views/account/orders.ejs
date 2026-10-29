@@ -1,0 +1,20 @@
+<%- include('../partials/top') %>
+<%- include('../partials/account-head', { heading: 'Orders', sub: 'Every service you have ordered, newest first.' }) %>
+<div class="wrap app-body">
+  <div class="panel">
+    <div class="panel-head">
+      <h2><%= orders.length %> <%= orders.length === 1 ? 'order' : 'orders' %></h2>
+      <a class="btn btn-sm" href="/account/orders/new" id="new-order">Place a new order</a>
+    </div>
+    <% if (orders.length) { %>
+      <%- include('_orders-table', { orders }) %>
+    <% } else { %>
+      <div class="empty" id="no-orders">
+        <h3>No orders yet</h3>
+        <p>Choose a service and delivery speed. You will see the full price before you confirm.</p>
+        <a class="btn btn-accent" href="/account/orders/new">Place your first order</a>
+      </div>
+    <% } %>
+  </div>
+</div>
+<%- include('../partials/bottom') %>

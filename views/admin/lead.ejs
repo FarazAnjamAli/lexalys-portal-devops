@@ -1,0 +1,45 @@
+<%- include('../partials/top') %>
+<%- include('../partials/admin-head', { heading: 'Lead #' + lead.id + ': ' + lead.full_name, sub: 'Received ' + fmt.dateTime(lead.created_at) + '.' }) %>
+<div class="wrap app-body">
+  <div class="record">
+    <div>
+      <dl class="facts" id="lead-facts">
+        <dt>Status</dt><dd><span class="badge badge-<%= lead.status %>" id="lead-status"><%= fmt.status(lead.status) %></span></dd>
+        <dt>Type</dt><dd><%= lead.kind %></dd>
+        <dt>Email</dt><dd><a href="mailto:<%= lead.email %>"><%= lead.email %></a></dd>
+        <dt>Company</dt><dd><%= lead.company || '-' %></dd>
+        <dt>Phone</dt><dd><%= lead.phone || '-' %></dd>
+        <dt>Service</dt><dd><%= lead.service_name || 'Not chosen' %></dd>
+        <dt>Budget</dt><dd><%= lead.budget || 'Not given' %></dd>
+        <dt>Account</dt><dd><%= lead.account_name || 'Sent without signing in' %></dd>
+      </dl>
+      <h3>Message</h3>
+      <div class="message" id="lead-message"><%= lead.message %></div>
+      <a class="btn btn-ghost" href="/admin/leads">Back to leads</a>
+    </div>
+    <aside>
+      <form class="side" method="post" action="/admin/leads/<%= lead.id %>" id="lead-update-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <h3>Follow-up</h3>
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status" name="status">
+            <% statuses.forEach(function (s) { %><option value="<%= s %>" <%= lead.status === s ? 'selected' : '' %>><%= fmt.status(s) %></option><% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label for="admin_note">Internal note</label>
+          <textarea id="admin_note" name="admin_note"><%= lead.admin_note || '' %></textarea>
+        </div>
+        <button class="btn" type="submit" id="lead-save">Save follow-up</button>
+      </form>
+      <form class="side" method="post" action="/admin/leads/<%= lead.id %>/delete" id="lead-delete-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <h3>Delete lead</h3>
+        <p class="dim">Removes this enquiry permanently. Use it for spam.</p>
+        <button class="btn btn-danger" type="submit" id="lead-delete">Delete lead</button>
+      </form>
+    </aside>
+  </div>
+</div>
+<%- include('../partials/bottom') %>

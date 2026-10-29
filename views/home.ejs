@@ -1,0 +1,63 @@
+<%- include('partials/top') %>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1 id="hero-title">Agents that answer, chase and quote while your team sleeps.</h1>
+      <p class="lead">Lexalys Labs builds AI receptionists, chat and voice agents, and back-office automations for growing companies. Fixed prices, published up front, delivered in days.</p>
+      <div class="btn-row">
+        <a class="btn btn-accent" href="/services" id="cta-services">Browse all services</a>
+        <a class="btn btn-ghost" href="/contact?kind=audit&amp;service=workflow-audit" id="cta-audit">Book a workflow audit</a>
+      </div>
+      <div class="hero-facts">
+        <div><b id="stat-services"><%= stats.services %></b><span>services with fixed prices</span></div>
+        <div><b><%= stats.fastest %> days</b><span>fastest delivery</span></div>
+        <div><b><%= fmt.money(stats.from_price) %></b><span>lowest starting price</span></div>
+      </div>
+    </div>
+    <aside class="ratecard notch" aria-labelledby="ratecard-title">
+      <div class="ratecard-head">
+        <h2 id="ratecard-title">Rate card</h2>
+        <span>USD, one-time setup</span>
+      </div>
+      <ol id="ratecard-list">
+        <% featured.forEach(function (s) { %>
+          <li>
+            <a href="/services/<%= s.slug %>">
+              <span class="code mono"><%= s.code %></span>
+              <span class="name"><%= s.name %><small><%= s.timeline_days ? s.timeline_days + ' business days' : 'Scoped after audit' %></small></span>
+              <span class="price"><%= fmt.money(s.setup_price) %><% if (s.monthly_price) { %><small>+ <%= fmt.money(s.monthly_price) %>/mo care</small><% } %></span>
+            </a>
+          </li>
+        <% }) %>
+      </ol>
+      <div class="ratecard-foot"><a href="/services">See all <%= stats.services %> services and prices</a></div>
+    </aside>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <h2>How an engagement runs</h2>
+      <p>The price you see when you order is the price you pay. Rush delivery is quoted up front, never added later.</p>
+    </div>
+    <ol class="steps">
+      <li><h3>Order or enquire</h3><p>Pick a service and delivery speed, or send us a question first. Both land with a person on our team the same day.</p></li>
+      <li><h3>We confirm and build</h3><p>We approve the order, agree access, then build with guardrails and testing. You can follow every status change in your account.</p></li>
+      <li><h3>Go live with care</h3><p>We hand over, train your team and stay on call. An optional care plan covers monitoring and model upgrades.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="band band-ground">
+  <div class="wrap">
+    <div class="cta-slab notch">
+      <div>
+        <h2>Not sure where to start?</h2>
+        <p>Tell us what eats your team's week. We will reply with what we would automate first.</p>
+      </div>
+      <a class="btn" href="/contact" id="cta-contact">Send us a message</a>
+    </div>
+  </div>
+</section>
+<%- include('partials/bottom') %>

@@ -1,0 +1,16 @@
+<%- include('../partials/top') %>
+<%- include('../partials/account-head', { heading: 'Enquiries', sub: 'Questions, audit bookings and callback requests you sent while signed in.' }) %>
+<div class="wrap app-body">
+  <div class="panel">
+    <div class="panel-head">
+      <h2><%= leads.length %> <%= leads.length === 1 ? 'enquiry' : 'enquiries' %></h2>
+      <a class="btn btn-sm" href="/contact" id="new-enquiry">Send a new enquiry</a>
+    </div>
+    <% if (leads.length) { %>
+      <%- include('_leads-table', { leads }) %>
+    <% } else { %>
+      <div class="empty" id="no-enquiries"><h3>No enquiries yet</h3><p>Questions you send from the contact page while signed in appear here.</p></div>
+    <% } %>
+  </div>
+</div>
+<%- include('../partials/bottom') %>

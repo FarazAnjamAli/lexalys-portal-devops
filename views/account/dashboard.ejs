@@ -1,0 +1,39 @@
+<%- include('../partials/top') %>
+<%- include('../partials/account-head', { heading: 'Welcome back, ' + user.full_name.split(' ')[0], sub: (user.company ? user.company + '. ' : '') + 'Client since ' + fmt.date(user.created_at) + '.' }) %>
+<div class="wrap app-body">
+  <div class="stats" id="client-stats">
+    <div class="stat"><b id="stat-total"><%= stats.total %></b><span>Orders placed</span></div>
+    <div class="stat accent"><b id="stat-active"><%= stats.active %></b><span>In progress</span></div>
+    <div class="stat"><b id="stat-delivered"><%= stats.delivered %></b><span>Delivered</span></div>
+    <div class="stat"><b id="stat-invested"><%= fmt.money(stats.invested) %></b><span>Total setup value</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Recent orders</h2>
+      <a class="btn btn-sm" href="/account/orders/new" id="new-order">Place a new order</a>
+    </div>
+    <% if (orders.length) { %>
+      <%- include('_orders-table', { orders }) %>
+    <% } else { %>
+      <div class="empty" id="no-orders">
+        <h3>No orders yet</h3>
+        <p>Pick a service from the catalogue to place your first order. You can cancel while it is pending.</p>
+        <a class="btn btn-accent" href="/services">Browse services</a>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Recent enquiries</h2>
+      <a href="/contact">Send a new enquiry</a>
+    </div>
+    <% if (leads.length) { %>
+      <%- include('_leads-table', { leads }) %>
+    <% } else { %>
+      <p class="dim" id="no-enquiries">You have not sent us any enquiries while signed in.</p>
+    <% } %>
+  </div>
+</div>
+<%- include('../partials/bottom') %>

@@ -1,0 +1,13 @@
+<section class="app-head">
+  <div class="wrap">
+    <h1 id="page-title"><%= heading %></h1>
+    <p><%= sub %></p>
+    <nav class="tabs" aria-label="Account">
+      <a href="/account" id="tab-dashboard" <%- path === '/account' || path === '/account/' ? 'aria-current="page"' : '' %>>Dashboard</a>
+      <a href="/account/orders" id="tab-orders" <%- path.startsWith('/account/orders') ? 'aria-current="page"' : '' %>>Orders</a>
+      <a href="/account/enquiries" id="tab-enquiries" <%- path.startsWith('/account/enquiries') ? 'aria-current="page"' : '' %>>Enquiries</a>
+      <a href="/account/profile" id="tab-profile" <%- path.startsWith('/account/profile') ? 'aria-current="page"' : '' %>>Profile</a>
+    </nav>
+  </div>
+</section>
+<div class="wrap"><%- include('flash') %></div>

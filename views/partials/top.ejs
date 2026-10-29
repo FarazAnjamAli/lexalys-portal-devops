@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+  <meta name="description" content="Lexalys Labs builds AI agents, assistants and automations for growing companies.">
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/static/img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="stylesheet" href="/static/css/portal.css">
+  <script src="/static/js/portal.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/" id="nav-home" aria-label="Lexalys Labs home">
+      <img src="/static/img/logo.svg" alt="Lexalys Labs" width="79" height="38">
+    </a>
+    <button class="btn btn-ghost btn-sm menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">Menu</button>
+    <nav class="nav" id="main-nav" aria-label="Main">
+      <a href="/services" id="nav-services" <%- path.startsWith('/services') ? 'aria-current="page"' : '' %>>Services</a>
+      <a href="/contact" id="nav-contact" <%- path.startsWith('/contact') ? 'aria-current="page"' : '' %>>Contact</a>
+      <% if (user) { %>
+        <a href="/account" id="nav-account" <%- path.startsWith('/account') ? 'aria-current="page"' : '' %>>My account</a>
+        <% if (user.role === 'admin') { %>
+          <a href="/admin" id="nav-admin" <%- path.startsWith('/admin') ? 'aria-current="page"' : '' %>>Admin</a>
+        <% } %>
+      <% } %>
+    </nav>
+    <div class="auth">
+      <% if (user) { %>
+        <span class="who">Signed in as <strong id="current-user"><%= user.full_name %></strong></span>
+        <form method="post" action="/logout">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="btn btn-ghost btn-sm" id="logout-button" type="submit">Sign out</button>
+        </form>
+      <% } else { %>
+        <a class="btn btn-ghost btn-sm" href="/login" id="nav-login">Sign in</a>
+        <a class="btn btn-sm" href="/register" id="nav-register">Create account</a>
+      <% } %>
+    </div>
+  </div>
+</header>
+<main id="main">

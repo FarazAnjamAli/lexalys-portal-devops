@@ -1,0 +1,33 @@
+<%- include('partials/top') %>
+<div class="wrap form-page">
+  <div class="side-copy">
+    <h1>Create your client account</h1>
+    <p class="lead">One account to order services, follow every status change and keep your enquiries in one place.</p>
+    <ul>
+      <li>Fixed prices shown before you order</li>
+      <li>Cancel any order while it is still pending</li>
+      <li>See who changed what, and when</li>
+    </ul>
+  </div>
+  <form class="form-card notch" method="post" action="/register" id="register-form" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <% if (Object.keys(errors).length) { %>
+      <div class="form-error" role="alert" id="form-error">Check the highlighted fields and try again.</div>
+    <% } %>
+    <div class="form-grid">
+      <%- include('partials/field', { name: 'full_name', label: 'Full name', value: values.full_name, error: errors.full_name, required: true, autocomplete: 'name' }) %>
+      <%- include('partials/field', { name: 'email', label: 'Email', type: 'email', value: values.email, error: errors.email, required: true, autocomplete: 'email' }) %>
+      <%- include('partials/field', { name: 'company', label: 'Company', value: values.company, error: errors.company, autocomplete: 'organization' }) %>
+      <%- include('partials/field', { name: 'phone', label: 'Phone', type: 'tel', value: values.phone, error: errors.phone, autocomplete: 'tel' }) %>
+      <%- include('partials/field', { name: 'password', label: 'Password', type: 'password', value: '', error: errors.password, required: true, autocomplete: 'new-password', hint: 'At least 8 characters, with letters and numbers' }) %>
+      <%- include('partials/field', { name: 'confirm_password', label: 'Confirm password', type: 'password', value: '', error: errors.confirm_password, required: true, autocomplete: 'new-password' }) %>
+    </div>
+    <div class="field <%= errors.terms ? 'has-error' : '' %>">
+      <label class="check" for="terms"><input type="checkbox" id="terms" name="terms" <%= values.terms ? 'checked' : '' %>> I agree to the Lexalys Labs terms of service and privacy policy</label>
+      <% if (errors.terms) { %><span class="error" id="terms-error"><%= errors.terms %></span><% } %>
+    </div>
+    <button class="btn btn-accent" type="submit" id="register-submit">Create account</button>
+    <p class="mt dim">Already have an account? <a href="/login" id="to-login">Sign in</a></p>
+  </form>
+</div>
+<%- include('partials/bottom') %>

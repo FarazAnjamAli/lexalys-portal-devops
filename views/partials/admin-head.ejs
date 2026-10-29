@@ -1,0 +1,14 @@
+<section class="app-head">
+  <div class="wrap">
+    <h1 id="page-title"><%= heading %></h1>
+    <p><%= sub %></p>
+    <nav class="tabs" aria-label="Admin">
+      <a href="/admin" id="tab-admin-dashboard" <%- path === '/admin' || path === '/admin/' ? 'aria-current="page"' : '' %>>Overview</a>
+      <a href="/admin/leads" id="tab-admin-leads" <%- path.startsWith('/admin/leads') ? 'aria-current="page"' : '' %>>Leads</a>
+      <a href="/admin/orders" id="tab-admin-orders" <%- path.startsWith('/admin/orders') ? 'aria-current="page"' : '' %>>Orders</a>
+      <a href="/admin/services" id="tab-admin-services" <%- path.startsWith('/admin/services') ? 'aria-current="page"' : '' %>>Services</a>
+      <a href="/admin/users" id="tab-admin-users" <%- path.startsWith('/admin/users') ? 'aria-current="page"' : '' %>>Users</a>
+    </nav>
+  </div>
+</section>
+<div class="wrap"><%- include('flash') %></div>

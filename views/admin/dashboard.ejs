@@ -1,0 +1,49 @@
+<%- include('../partials/top') %>
+<%- include('../partials/admin-head', { heading: 'Admin overview', sub: 'Leads, orders and revenue across all clients.' }) %>
+<div class="wrap app-body">
+  <div class="stats" id="admin-stats">
+    <div class="stat accent"><b id="stat-new-leads"><%= stats.new_leads %></b><span>New leads to answer (<%= stats.leads %> total)</span></div>
+    <div class="stat"><b id="stat-pending-orders"><%= stats.pending_orders %></b><span>Orders waiting for approval</span></div>
+    <div class="stat"><b id="stat-booked"><%= fmt.money(stats.booked) %></b><span>Setup revenue booked</span></div>
+    <div class="stat"><b id="stat-mrr"><%= fmt.money(stats.mrr) %></b><span>Monthly care revenue</span></div>
+  </div>
+
+  <h2 class="visually-hidden">Orders by status</h2>
+  <div class="pipeline" id="order-pipeline">
+    <% Object.keys(statusCounts).forEach(function (s) { %>
+      <a href="/admin/orders?status=<%= s %>"><b><%= statusCounts[s] %></b><span><%= fmt.status(s) %></span></a>
+    <% }) %>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-head"><h2>Latest leads</h2><a href="/admin/leads">All leads</a></div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Name</th><th>Received</th><th>Status</th></tr></thead>
+          <tbody>
+            <% leads.forEach(function (l) { %>
+              <tr><td><a href="/admin/leads/<%= l.id %>"><%= l.full_name %></a><div class="muted"><%= l.company || l.email %></div></td><td><%= fmt.date(l.created_at) %></td><td><span class="badge badge-<%= l.status %>"><%= fmt.status(l.status) %></span></td></tr>
+            <% }) %>
+            <% if (!leads.length) { %><tr><td colspan="3" class="muted">No leads yet.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Latest orders</h2><a href="/admin/orders">All orders</a></div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Order</th><th>Client</th><th>Status</th></tr></thead>
+          <tbody>
+            <% orders.forEach(function (o) { %>
+              <tr><td><a class="mono" href="/admin/orders/<%= o.id %>"><%= o.order_no %></a><div class="muted"><%= o.service_name %></div></td><td><%= o.client_name %></td><td><span class="badge badge-<%= o.status %>"><%= fmt.status(o.status) %></span></td></tr>
+            <% }) %>
+            <% if (!orders.length) { %><tr><td colspan="3" class="muted">No orders yet.</td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/bottom') %>

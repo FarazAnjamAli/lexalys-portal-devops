@@ -1,0 +1,58 @@
+<%- include('partials/top') %>
+<div class="wrap form-page">
+  <div class="side-copy">
+    <h1>Talk to Lexalys Labs</h1>
+    <p class="lead">Tell us what eats your team's week. A person on our team reads every message and replies within one business day.</p>
+    <ul>
+      <li>Ask about any service or a custom build</li>
+      <li>Book a workflow audit before you commit</li>
+      <li>Request a callback if you would rather talk</li>
+    </ul>
+    <p class="dim">Already a client? <a href="/account">Sign in</a> and your enquiries are kept with your account.</p>
+  </div>
+
+  <form class="form-card notch" method="post" action="/contact" id="contact-form" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <% if (Object.keys(errors).length) { %>
+      <div class="form-error" role="alert" id="form-error">Check the highlighted fields and try again.</div>
+    <% } %>
+
+    <div class="field">
+      <span class="label">What can we help with?</span>
+      <div class="radio-cards" id="kind-options">
+        <label><input type="radio" name="kind" value="contact" id="kind-contact" <%= (values.kind || 'contact') === 'contact' ? 'checked' : '' %>> General question</label>
+        <label><input type="radio" name="kind" value="audit" id="kind-audit" <%= values.kind === 'audit' ? 'checked' : '' %>> Book a workflow audit</label>
+        <label><input type="radio" name="kind" value="callback" id="kind-callback" <%= values.kind === 'callback' ? 'checked' : '' %>> Request a callback</label>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <%- include('partials/field', { name: 'full_name', label: 'Full name', value: values.full_name, error: errors.full_name, required: true, autocomplete: 'name' }) %>
+      <%- include('partials/field', { name: 'email', label: 'Work email', type: 'email', value: values.email, error: errors.email, required: true, autocomplete: 'email' }) %>
+      <%- include('partials/field', { name: 'company', label: 'Company', value: values.company, error: errors.company, autocomplete: 'organization' }) %>
+      <%- include('partials/field', { name: 'phone', label: 'Phone', type: 'tel', value: values.phone, error: errors.phone, autocomplete: 'tel', hint: 'Needed for a callback' }) %>
+
+      <div class="field <%= errors.service_id ? 'has-error' : '' %>">
+        <label for="service_id">Service you are interested in</label>
+        <select id="service_id" name="service_id">
+          <option value="">Not sure yet</option>
+          <% services.forEach(function (s) { %>
+            <option value="<%= s.id %>" <%= Number(values.service_id) === s.id ? 'selected' : '' %>><%= s.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="field">
+        <label for="budget">Budget</label>
+        <select id="budget" name="budget">
+          <option value="">Prefer not to say</option>
+          <% budgets.forEach(function (b) { %>
+            <option value="<%= b %>" <%= values.budget === b ? 'selected' : '' %>><%= b %></option>
+          <% }) %>
+        </select>
+      </div>
+      <%- include('partials/field', { name: 'message', label: 'Message', type: 'textarea', value: values.message, error: errors.message, required: true, cls: 'full' }) %>
+    </div>
+    <button class="btn btn-accent" type="submit" id="contact-submit">Send message</button>
+  </form>
+</div>
+<%- include('partials/bottom') %>

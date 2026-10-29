@@ -1,0 +1,34 @@
+<%- include('../partials/top') %>
+<%- include('../partials/admin-head', { heading: 'Services', sub: 'The catalogue clients see. Hidden services stay on existing orders.' }) %>
+<div class="wrap app-body">
+  <div class="panel-head">
+    <p class="dim" id="result-count"><%= services.length %> services, <%= services.filter(function (s) { return s.is_active; }).length %> visible</p>
+    <a class="btn btn-sm" href="/admin/services/new" id="new-service">Add a service</a>
+  </div>
+  <div class="table-wrap">
+    <table class="data" id="services-table">
+      <thead><tr><th>Code</th><th>Service</th><th>Category</th><th class="num">Setup</th><th class="num">Monthly</th><th class="num">Days</th><th class="num">Orders</th><th>Visibility</th><th></th></tr></thead>
+      <tbody>
+        <% services.forEach(function (s) { %>
+          <tr data-slug="<%= s.slug %>">
+            <td class="mono"><%= s.code %></td>
+            <td><a href="/admin/services/<%= s.id %>/edit"><%= s.name %></a><div class="muted">/services/<%= s.slug %></div></td>
+            <td><%= s.category %></td>
+            <td class="num"><%= fmt.money(s.setup_price) %></td>
+            <td class="num"><%= s.monthly_price ? fmt.money(s.monthly_price) : '-' %></td>
+            <td class="num"><%= s.timeline_days || '-' %></td>
+            <td class="num"><%= s.order_count %></td>
+            <td><span class="badge badge-<%= s.is_active ? 'active' : 'inactive' %>"><%= s.is_active ? 'Visible' : 'Hidden' %></span></td>
+            <td>
+              <form method="post" action="/admin/services/<%= s.id %>/toggle">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="btn-link" type="submit"><%= s.is_active ? 'Hide' : 'Show' %></button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/bottom') %>

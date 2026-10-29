@@ -1,0 +1,11 @@
+<%- include('partials/top') %>
+<div class="wrap error-page">
+  <p class="code" id="error-code">Error <%= code %></p>
+  <h1 id="error-title"><%= title %></h1>
+  <p class="lead"><%= message %></p>
+  <div class="btn-row">
+    <a class="btn" href="/">Go to the home page</a>
+    <a class="btn btn-ghost" href="/services">Browse services</a>
+  </div>
+</div>
+<%- include('partials/bottom') %>

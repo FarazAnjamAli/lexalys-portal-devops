@@ -1,0 +1,18 @@
+<%- include('partials/top') %>
+<div class="wrap form-page narrow">
+  <div>
+    <%- include('partials/flash') %>
+    <h1 class="mt">Sign in</h1>
+    <p class="dim">Track your orders and enquiries with Lexalys Labs.</p>
+    <form class="form-card notch" method="post" action="/login" id="login-form" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="next" value="<%= next %>">
+      <% if (errors.form) { %><div class="form-error" role="alert" id="login-error"><%= errors.form %></div><% } %>
+      <%- include('partials/field', { name: 'email', label: 'Email', type: 'email', value: values.email, error: errors.email, required: true, autocomplete: 'username' }) %>
+      <%- include('partials/field', { name: 'password', label: 'Password', type: 'password', value: '', error: errors.password, required: true, autocomplete: 'current-password' }) %>
+      <button class="btn btn-accent" type="submit" id="login-submit">Sign in</button>
+    </form>
+    <p class="mt">New to Lexalys Labs? <a href="/register" id="to-register">Create an account</a></p>
+  </div>
+</div>
+<%- include('partials/bottom') %>

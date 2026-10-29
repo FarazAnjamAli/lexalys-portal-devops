@@ -1,0 +1,37 @@
+<%- include('../partials/top') %>
+<%- include('../partials/admin-head', { heading: 'Leads', sub: 'Every enquiry from the contact form, newest first.' }) %>
+<div class="wrap app-body">
+  <form class="filters" method="get" action="/admin/leads" id="lead-filters">
+    <div class="field"><label for="q">Search</label><input type="search" id="q" name="q" value="<%= q %>" placeholder="Name, email or company"></div>
+    <div class="field">
+      <label for="status">Status</label>
+      <select id="status" name="status">
+        <option value="">All statuses</option>
+        <% statuses.forEach(function (s) { %><option value="<%= s %>" <%= status === s ? 'selected' : '' %>><%= fmt.status(s) %></option><% }) %>
+      </select>
+    </div>
+    <button class="btn" type="submit" id="filter-submit">Filter</button>
+    <% if (q || status) { %><a href="/admin/leads">Clear</a><% } %>
+  </form>
+  <p class="dim" id="result-count"><%= leads.length %> <%= leads.length === 1 ? 'lead' : 'leads' %></p>
+  <div class="table-wrap">
+    <table class="data" id="leads-table">
+      <thead><tr><th>#</th><th>Name</th><th>Type</th><th>Service</th><th>Budget</th><th>Received</th><th>Status</th></tr></thead>
+      <tbody>
+        <% leads.forEach(function (l) { %>
+          <tr>
+            <td class="mono"><%= l.id %></td>
+            <td><a href="/admin/leads/<%= l.id %>"><%= l.full_name %></a><div class="muted"><%= l.email %><%= l.company ? ', ' + l.company : '' %></div></td>
+            <td><%= l.kind %></td>
+            <td><%= l.service_name || '-' %></td>
+            <td><%= l.budget || '-' %></td>
+            <td><%= fmt.date(l.created_at) %></td>
+            <td><span class="badge badge-<%= l.status %>"><%= fmt.status(l.status) %></span></td>
+          </tr>
+        <% }) %>
+        <% if (!leads.length) { %><tr><td colspan="7" class="muted" id="no-results">No leads match these filters.</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/bottom') %>

@@ -1,0 +1,5 @@
+# Keep Linux line endings so shell scripts and YAML work on EC2
+* text=auto eol=lf
+*.png binary
+*.docx binary
+*.zip binary

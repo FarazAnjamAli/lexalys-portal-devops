@@ -1,0 +1,52 @@
+<%- include('partials/top') %>
+<div class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/services">Services</a> / <%= service.category %></nav>
+  <div class="detail">
+    <div>
+      <p class="mono dim">Service <%= service.code %></p>
+      <h1 id="service-name"><%= service.name %></h1>
+      <p class="lead" id="service-summary"><%= service.summary %></p>
+
+      <h2 class="mt">Delivery speed and price</h2>
+      <p class="dim">Rush delivery is confirmed only when we have capacity that week.</p>
+      <table class="rush-table" id="rush-table">
+        <thead><tr><th>Delivery</th><th>Time</th><th>Setup price</th></tr></thead>
+        <tbody>
+          <% Object.keys(rush).forEach(function (k) { const r = rush[k]; %>
+            <tr>
+              <td><%= r.label %></td>
+              <td><%= service.timeline_days ? Math.max(1, Math.ceil(service.timeline_days * r.speed)) + ' days' : 'Scoped' %></td>
+              <td><%= fmt.money(Math.round(service.setup_price * r.multiplier)) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <% if (related.length) { %>
+        <h2>Related services</h2>
+        <div class="svc-grid">
+          <% related.forEach(function (s) { %>
+            <a class="svc" href="/services/<%= s.slug %>">
+              <div class="top"><span class="mono"><%= s.code %></span><span><%= s.category %></span></div>
+              <h3><%= s.name %></h3>
+              <div class="meta"><span>from <b><%= fmt.money(s.setup_price) %></b></span></div>
+            </a>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+
+    <aside class="price-box notch" aria-label="Pricing">
+      <h2>Standard pricing</h2>
+      <dl>
+        <dt>Setup</dt><dd id="setup-price"><%= fmt.money(service.setup_price) %></dd>
+        <dt>Delivery</dt><dd><%= service.timeline_days ? service.timeline_days + ' days' : 'Scoped' %></dd>
+        <dt>Care plan</dt><dd><%= service.monthly_price ? fmt.money(service.monthly_price) + '/mo' : 'Not offered' %></dd>
+      </dl>
+      <a class="btn btn-accent" href="/account/orders/new?service=<%= service.slug %>" id="order-button">Order this service</a>
+      <a class="btn btn-ghost" href="/contact?service=<%= service.slug %>" id="ask-button">Ask a question first</a>
+    </aside>
+  </div>
+</div>
+<div class="band"></div>
+<%- include('partials/bottom') %>

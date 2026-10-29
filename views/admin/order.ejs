@@ -1,0 +1,48 @@
+<%- include('../partials/top') %>
+<%- include('../partials/admin-head', { heading: 'Order ' + order.order_no, sub: order.client_name + (order.client_company ? ' at ' + order.client_company : '') + ', placed ' + fmt.dateTime(order.created_at) + '.' }) %>
+<div class="wrap app-body">
+  <div class="record">
+    <div>
+      <dl class="facts" id="order-facts">
+        <dt>Status</dt><dd><span class="badge badge-<%= order.status %>" id="order-status"><%= fmt.status(order.status) %></span></dd>
+        <dt>Service</dt><dd><%= order.service_name %></dd>
+        <dt>Delivery speed</dt><dd><%= rush[order.rush].label %></dd>
+        <dt>Delivery time</dt><dd><%= order.timeline_days ? order.timeline_days + ' business days' : 'Scoped after audit' %></dd>
+        <dt>Setup total</dt><dd class="mono"><%= fmt.money(order.setup_total) %></dd>
+        <dt>Care plan</dt><dd class="mono"><%= order.monthly_total ? fmt.money(order.monthly_total) + ' / month' : 'None' %></dd>
+        <dt>Client email</dt><dd><a href="mailto:<%= order.client_email %>"><%= order.client_email %></a></dd>
+        <dt>Client phone</dt><dd><%= order.client_phone || '-' %></dd>
+      </dl>
+      <% if (order.notes) { %><h3>Client notes</h3><div class="message"><%= order.notes %></div><% } %>
+      <h3>History</h3>
+      <ol class="timeline" id="order-timeline">
+        <% events.forEach(function (e) { %>
+          <li><strong><%= fmt.status(e.status) %></strong><% if (e.note) { %>. <%= e.note %><% } %><div class="when"><%= fmt.dateTime(e.created_at) %><%= e.actor_name ? ' by ' + e.actor_name : '' %></div></li>
+        <% }) %>
+      </ol>
+      <a class="btn btn-ghost mt" href="/admin/orders">Back to orders</a>
+    </div>
+    <aside>
+      <% if (next.length) { %>
+        <form class="side" method="post" action="/admin/orders/<%= order.id %>/status" id="order-status-form">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <h3>Move this order</h3>
+          <div class="field">
+            <label for="status">New status</label>
+            <select id="status" name="status">
+              <% next.forEach(function (s) { %><option value="<%= s %>"><%= fmt.status(s) %></option><% }) %>
+            </select>
+          </div>
+          <div class="field">
+            <label for="note">Note for the history</label>
+            <input id="note" name="note" type="text" maxlength="500" placeholder="e.g. Kick-off call booked for Monday">
+          </div>
+          <button class="btn" type="submit" id="status-submit">Update status</button>
+        </form>
+      <% } else { %>
+        <div class="side"><h3>Closed</h3><p class="dim">This order is <%= fmt.status(order.status).toLowerCase() %> and cannot change further.</p></div>
+      <% } %>
+    </aside>
+  </div>
+</div>
+<%- include('../partials/bottom') %>

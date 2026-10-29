@@ -1,0 +1,34 @@
+<%- include('../partials/top') %>
+<%- include('../partials/admin-head', { heading: service ? 'Edit ' + service.name : 'Add a service', sub: 'Prices are whole US dollars.' }) %>
+<div class="wrap app-body">
+  <form class="form-card notch" method="post" action="<%= service ? '/admin/services/' + service.id : '/admin/services' %>" id="service-form" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <% if (Object.keys(errors).length) { %><div class="form-error" role="alert" id="form-error">Check the highlighted fields and try again.</div><% } %>
+    <div class="form-grid">
+      <%- include('../partials/field', { name: 'name', label: 'Service name', value: values.name, error: errors.name, required: true }) %>
+      <div class="field <%= errors.category ? 'has-error' : '' %>">
+        <label for="category">Category *</label>
+        <select id="category" name="category">
+          <option value="">Choose a category</option>
+          <% categories.forEach(function (c) { %><option <%= values.category === c ? 'selected' : '' %>><%= c %></option><% }) %>
+        </select>
+        <% if (errors.category) { %><span class="error" id="category-error"><%= errors.category %></span><% } %>
+      </div>
+      <%- include('../partials/field', { name: 'code', label: 'Code', value: values.code, error: errors.code, required: true, hint: 'Short ID, e.g. 19' }) %>
+      <%- include('../partials/field', { name: 'slug', label: 'URL slug', value: values.slug, error: errors.slug, required: true, hint: 'e.g. invoice-agent' }) %>
+      <%- include('../partials/field', { name: 'setup_price', label: 'Setup price (USD)', type: 'number', value: values.setup_price, error: errors.setup_price, required: true, attrs: 'min="1" step="1"' }) %>
+      <%- include('../partials/field', { name: 'monthly_price', label: 'Monthly care price (USD)', type: 'number', value: values.monthly_price, error: errors.monthly_price, hint: 'Leave empty if there is no care plan', attrs: 'min="0" step="1"' }) %>
+      <%- include('../partials/field', { name: 'timeline_days', label: 'Delivery time (business days)', type: 'number', value: values.timeline_days, error: errors.timeline_days, hint: 'Leave empty if scoped per client', attrs: 'min="1" max="365" step="1"' }) %>
+      <div class="field">
+        <span class="label">Visibility</span>
+        <label class="check" for="is_active"><input type="checkbox" id="is_active" name="is_active" <%= values.is_active ? 'checked' : '' %>> Show in the public catalogue</label>
+      </div>
+      <%- include('../partials/field', { name: 'summary', label: 'Summary', type: 'textarea', value: values.summary, error: errors.summary, required: true, cls: 'full' }) %>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-accent" type="submit" id="service-submit"><%= service ? 'Save service' : 'Add service' %></button>
+      <a class="btn btn-ghost" href="/admin/services">Cancel</a>
+    </div>
+  </form>
+</div>
+<%- include('../partials/bottom') %>

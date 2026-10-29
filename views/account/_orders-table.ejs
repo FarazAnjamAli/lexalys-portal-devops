@@ -1,0 +1,17 @@
+<div class="table-wrap">
+  <table class="data" id="orders-table">
+    <thead><tr><th>Order</th><th>Service</th><th>Placed</th><th>Status</th><th class="num">Setup</th><th class="num">Monthly</th></tr></thead>
+    <tbody>
+      <% orders.forEach(function (o) { %>
+        <tr data-order="<%= o.order_no %>">
+          <td><a class="mono" href="/account/orders/<%= o.id %>"><%= o.order_no %></a></td>
+          <td><%= o.service_name %></td>
+          <td><%= fmt.date(o.created_at) %></td>
+          <td><span class="badge badge-<%= o.status %>"><%= fmt.status(o.status) %></span></td>
+          <td class="num"><%= fmt.money(o.setup_total) %></td>
+          <td class="num"><%= o.monthly_total ? fmt.money(o.monthly_total) : '-' %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>

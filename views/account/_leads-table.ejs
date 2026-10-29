@@ -1,0 +1,17 @@
+<div class="table-wrap">
+  <table class="data" id="enquiries-table">
+    <thead><tr><th>Ref</th><th>Type</th><th>Service</th><th>Sent</th><th>Status</th></tr></thead>
+    <tbody>
+      <% const CL = { new: 'Received', contacted: 'Replied', qualified: 'In discussion', won: 'Closed', lost: 'Closed' }; %>
+      <% leads.forEach(function (l) { %>
+        <tr>
+          <td class="mono">#<%= l.id %></td>
+          <td><%= l.kind === 'audit' ? 'Workflow audit' : l.kind === 'callback' ? 'Callback' : 'Question' %></td>
+          <td><%= l.service_name || 'General' %></td>
+          <td><%= fmt.date(l.created_at) %></td>
+          <td><span class="badge badge-<%= l.status === 'lost' ? 'won' : l.status %>"><%= CL[l.status] %></span></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>

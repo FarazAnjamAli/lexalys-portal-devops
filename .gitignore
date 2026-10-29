@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+dist/
+*.zip
+*.pem
+.DS_Store
+!.env.docker.example
+*.docx
+.npm-cache/

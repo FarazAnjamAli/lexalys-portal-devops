@@ -1,0 +1,65 @@
+# ---------------------------------------------------------------------------
+# Assignment 2 - Part I: containerized deployment on AWS EC2
+#   docker compose up -d        start (pulls the image from Docker Hub)
+#   docker compose ps           status
+#   docker compose down         stop (the database volume is kept)
+#
+# Host ports differ from container ports, as the assignment asks:
+#   web  host 80   -> container 3000
+#   db   host 3307 -> container 3306
+# Secrets come from a .env file next to this file (see .env.docker.example).
+# ---------------------------------------------------------------------------
+name: lexalys
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: lexalys-db
+    restart: unless-stopped
+    command: ["--innodb-buffer-pool-size=128M", "--performance-schema=OFF"]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      MYSQL_DATABASE: lexalys_portal
+      MYSQL_USER: lexalys_app
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      GRADER_PASSWORD: ${GRADER_PASSWORD:-}
+    volumes:
+      - lexalys_db_data:/var/lib/mysql                      # persistent data
+      - ./db/docker-init:/docker-entrypoint-initdb.d:ro     # first-run SQL
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  web:
+    image: farazanjamali/lexalys-portal:latest
+    build: .
+    container_name: lexalys-web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DEPLOY_LABEL: "Docker on AWS EC2 (Assignment 2, Part I)"
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_USER: lexalys_app
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: lexalys_portal
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in .env}
+      COOKIE_SECURE: "false"
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@lexalyslabs.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
+      ADMIN_NAME: Lexalys Admin
+    ports:
+      - "80:3000"
+
+volumes:
+  lexalys_db_data:
+    name: lexalys_db_data
